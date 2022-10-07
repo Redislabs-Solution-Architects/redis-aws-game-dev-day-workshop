@@ -1,0 +1,11 @@
+apiVersion: 1
+
+datasources:
+  - name: Redis
+    type: redis-datasource
+    access: proxy
+    url: redis://redis:6379/
+  - name: SimpleJson
+    type: grafana-simple-json-datasource
+    access: proxy
+    url: http://leaderboard:5000/

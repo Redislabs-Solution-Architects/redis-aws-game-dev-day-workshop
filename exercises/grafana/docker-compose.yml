@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  redis:
+    image: "redis/redis-stack:6.2.4-v3"
+    ports:
+      - "6379:6379"
+  grafana:
+    image: grafana/grafana:8.2.2
+    links:
+      - "redis:redis"
+    ports:
+      - 3000:3000
+    environment:
+      - GF_INSTALL_PLUGINS=redis-datasource,grafana-simple-json-datasource      
+    restart: unless-stopped
+    volumes:
+      - ./datasources:/etc/grafana/provisioning/datasources
+      - ./dashboards:/etc/grafana/provisioning/dashboards
+      - grafana-data:/var/lib/grafana/
+
+volumes:
+  grafana-data:
