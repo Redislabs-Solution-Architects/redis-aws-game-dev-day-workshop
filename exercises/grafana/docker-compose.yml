@@ -9,6 +9,10 @@ services:
     image: grafana/grafana:8.2.2
     links:
       - "redis:redis"
+      - "leaderboard:leaderboard"
+    depends_on:
+      - redis
+      - leaderboard
     ports:
       - 3000:3000
     environment:
@@ -18,6 +22,15 @@ services:
       - ./datasources:/etc/grafana/provisioning/datasources
       - ./dashboards:/etc/grafana/provisioning/dashboards
       - grafana-data:/var/lib/grafana/
+  leaderboard:
+      build: .
+      environment:
+        - REDIS_SERVER=redis
+        - REDIS_LEADERBOARD_SET=LeaderBoards
+      depends_on:
+        - redis
+      ports:
+        - "5000:5000"
 
 volumes:
   grafana-data:
