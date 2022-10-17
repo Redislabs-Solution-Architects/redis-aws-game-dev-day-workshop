@@ -1,7 +1,7 @@
 <img src="../img/redis-logo-full-color-rgb.png" height=100/><img align="right" src="../img/aws-logo-1.jpeg" height=100 />
 
 # Exercise 1 - Matchmaking
-Hello and thank you for joining this hands-on lab! We're happy to have you join, so welcome! This first exercise aims to get you up and running and introduce you to some of the core concepts and datatypes of Redis that we will be using to build a very fast Matchmaking engine. We'll also introduce you to the data type that powers many Leaderboards across the world. If you're stuck, don't dwell too long on it. Instead, check out the hints and the solution [over here](exercise-1-solution.md) or reach out to one of the instructors, who will be quite happy to help!
+Hello and thank you for joining this hands-on lab! We're happy to have you join, so welcome! This first exercise aims to get you up and running and introduce you to some of the core concepts and datatypes of Redis that we will be using to build a very fast Matchmaking engine. We'll also introduce you to the data type that powers many Leaderboards across the world. If you're stuck, don't dwell too long on it. Instead, check out the hints and the solution [over here](exercise-1-solution.md) or reach out to one of the instructors, who will be quite happy to help! Also, be sure to check out Volkan Civelek's excellent e-book on Matchmaking at <tbd>.
 
 ## Goals
 
@@ -100,37 +100,67 @@ Let's start with RediSearch, a full-text search module for Redis. Retrieving key
 
 * First, we'll create a search index on Hash structures matching a certain prefix:
 ```
-FT.CREATE GameTix ON HASH PREFIX 1 user: SCHEMA username TEXT mmr NUMERIC SORTABLE experience NUMERIC location GEO play_style_tags TAG blacklist_tags TAG group_tags TAG secondary_group_tags TAG pop TEXT SORTABLE
+FT.CREATE Game-x ON HASH PREFIX 1 user: SCHEMA username TEXT mmr NUMERIC SORTABLE experience NUMERIC location GEO play_style_tags TAG blacklist_tags TAG group_tags TAG secondary_group_tags TAG pop TEXT SORTABLE
 ```
 
-This command is a little bit more elaborate than the previous ones, so let's explore it in detail a bit more. We're creating an index called `GameTix` on the `hash` datastructure with one prefix `user:` (remember that we created a Hash earlier that had the key `user:lars`?) and we define the schema to be on the `username` field, which we define as a `TEXT` field. Note that you can also do really cool things such as phonetic search, but that's not needed for this exercise.
+This command is a little bit more elaborate than the previous ones, so let's explore it in detail a bit more. We're creating an index called `Game-x` on the `hash` datastructure with one prefix `user:` (remember that we created a Hash earlier that had the key `user:lars`?) and we define the schema to be on the `username` field, which we define as a `TEXT` field. Note that you can also do really cool things such as phonetic search, but that's not needed for this exercise.
 
 Furthermore we also add the `mmr`, `experience`, `location`, `play_style_tags`, `blacklist_tags`, `group_tags`, `secondary_group_tags` and `pop` fields to the index. Note that you can matchmake on one, more or all items, depending on your use case. But keep in mind that the more attributes you match on, the narrower your search is going to be and it will result in fewer results. So there's always the need to balance quality with quantity, but this may very will depend on the specific player.
 
-* Let's search our immense data set of 1 Hash and see if we can find what we want by typing a few different commands:
+Now let's perform some searches that are relevant in a matchmaking context:
+
+* ### Find the closest network edge POP to the player 
+
 ```
-FT.SEARCH GameTix "@mmr:[1300 1400] @location:[50.1211277 8.4964827 1000 km] ~@group_tags:{redis_gamers|aws_gamers} ~@play_style_tags:{sniper} -@username:(ragequitter456,camper123)" LIMIT 0 4 WITHSCORES
+FT.AGGREGATE cities * LOAD 2 city location 
+  APPLY geodistance(@location, 134.811767,51.6716705) AS dist 
+  SORTBY 2 @dist ASC LIMIT 0 1
 ```
 
-This will return our Hash that we created earlier. There's an exact match on the MMR range, location and radius (user:lars' location is in Utrecht and I'm matching to Frankfurt, location of an AWS region). There's also a match on some of the optional items, such as group_tags and play_style and there's no match on the specified usernames. 
+* ### Find players on closest server
+```
+FT.SEARCH Game-x @pop:Miami LIMIT 0 4 RETURN 3 gamer_id mmr pop
+```
 
-No prefix on an attribute means an exact match is needed. The `~` prefix before a search attribute means that this part of the search is optional, but if it's there, the result will be ranked higher. Remember when we mentioned earlier that adding more and more attributes into your search will make it narrower and thus less likely to produce results? Using the `~` is a good way to add more attributes without actually limiting the search results. Perfect for matchmaking!
+* ### Find players on the closest server within +/- 2.5% of MMR
+```
+FT.SEARCH Game-x @pop:Miami @mmr:[2731 2872]
+```
 
-The `-` prefix is used to exclude. In this case we don't want to match with users `ragequitter456` and `camper123`, so these will be excluded from the search result.
+* ### Closest players within +/- 2.5% of MMR who are not blacklisted
+```
+FT.SEARCH Game-x @pop:Miami @mmr:[2731 2872] -@gamer_id:(2112|4343)
+```
+
+* ### Match people in my groups with a similar play style
+```
+FT.SEARCH Game-x -@group_tags:{thistle_community|olive_club} ~@play_style_tags:{med_mobile|sprayer}
+```
+
+### Query syntax
+
+For a full overview of the RediSearch Query syntax, click [here](https://redis.io/docs/stack/search/reference/query_syntax/).
+We'll explain some of the important parts below.
+
+No prefix on an attribute means an exact match is needed. 
+
+The `~` prefix before a search attribute means that this part of the search is optional, but if it's there, the result will be ranked higher. Remember when we mentioned earlier that adding more and more attributes into your search will make it narrower and thus less likely to produce results? Using the `~` is a good way to add more attributes without actually limiting the search results. Perfect for matchmaking!
+
+The `-` prefix is used to exclude. In the case above we don't want to match with users `2112` and `4343`, so these will be excluded from the search result.
 
 It's also possible to assign a weight to a specific value you're searching for, to further fine tune the search results and boost certain values over others.
 
 * You can also do a wildcard search:
 ```
-ft.search GameTix @username:la*
+ft.search Game-x @username:la*
 ```
  This will match all users whose username starts with `la`. Another great feature is that search results can be highlighted on which word the match was found on:
 ```
-ft.search GameTix @username:la* highlight
+ft.search Game-x @username:la* highlight
 ```
 Notice how `lars` has no been surrounded by ```<b></b>``` tags. This is great in case we want to visually display the matching words differently in our UI. We can also change the tags by doing the following:
 ```
-ft.search GameTix @username:la* highlight tags <hello> </hello>
+ft.search Game-x @username:la* highlight tags <hello> </hello>
 ```
 Notice how `lars` is now surrounded with the tags of our choosing.
 
