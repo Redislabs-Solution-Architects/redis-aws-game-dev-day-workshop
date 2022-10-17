@@ -1,7 +1,7 @@
 <img src="../img/redis-logo-full-color-rgb.png" height=100/><img align="right" src="../img/aws-logo-1.jpeg" height=100 />
 
-# Exercise 1 - Leaderboards
-Hello and thank you for joining this hands-on lab! We're happy to have you join, so welcome! This first exercise aims to get you up and running and introduce you to some of the core concepts and show you how to build and query a Leaderboard. If you're stuck, don't dwell too long on it. Instead, check out the hints and the solution [over here](exercise-1-solution.md) or reach out to one of the instructors, who will be quite happy to help!
+# Exercise 1 - Matchmaking
+Hello and thank you for joining this hands-on lab! We're happy to have you join, so welcome! This first exercise aims to get you up and running and introduce you to some of the core concepts and datatypes of Redis that we will be using to build a very fast Matchmaking engine. We'll also introduce you to the data type that powers many Leaderboards across the world. If you're stuck, don't dwell too long on it. Instead, check out the hints and the solution [over here](exercise-1-solution.md) or reach out to one of the instructors, who will be quite happy to help!
 
 ## Goals
 
@@ -9,7 +9,7 @@ Hello and thank you for joining this hands-on lab! We're happy to have you join,
 * Learn about some of the different [data types in Redis](https://redis.io/topics/data-types-intro)
 * Learn about the [Hash](https://redis.io/docs/data-types/hashes/) data type and how we will use it to manage Tickets
 * Learn how to build a Leaderboard using a [Sorted Set](https://redis.io/docs/data-types/sorted-sets/)
-* Learn how to use [RediSearch](https://redis.io/docs/stack/search/) to execute fast queries on Redis Hashes or [JSON](https://redis.io/docs/stack/json/) documents
+* Learn how to use [RediSearch](https://redis.io/docs/stack/search/) to execute fast queries on Redis Hashes or [JSON](https://redis.io/docs/stack/json/) documents to build a fast matchmaking engine.
 
 ### Starting Redis and opening the CLI
 * In a terminal Window, open the Redis CLI and connect to your provided Redis Enterprise database by typing:
@@ -136,6 +136,9 @@ Notice how `lars` is now surrounded with the tags of our choosing.
 
 And that's not all of the module's functionality; there's plenty more, so if you want to learn more about all the functionality of the RediSearch module, please check the [RediSearch documentation](https://oss.redis.com/redisearch/).
 
+### How to do this all in code
+
+Now that 
 
 ## Next steps
 

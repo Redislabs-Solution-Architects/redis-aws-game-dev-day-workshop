@@ -20,8 +20,8 @@ tbd
 
 ## Exercises
 
-* Exercise 1 - Leaderboards: [start](exercises/exercise-1-start.md), [solution](exercises/exercise-1-solution)
-* Exercise 2 - Matchmaking: [start](exercises/exercise-2-start.md), [solution](exercises/exercise-2-solution.md)
+* Exercise 1 - Matchmaking: [start](exercises/exercise-1-start.md), [solution](exercises/exercise-1-solution)
+* Exercise 2 - Leaderboards: [start](exercises/exercise-2-start.md), [solution](exercises/exercise-2-solution.md)
 
 ## Troubleshooting
 tbd
