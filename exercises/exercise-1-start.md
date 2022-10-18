@@ -11,6 +11,12 @@ Hello and thank you for joining this hands-on lab! We're happy to have you join,
 * Learn how to build a Leaderboard using a [Sorted Set](https://redis.io/docs/data-types/sorted-sets/)
 * Learn how to use [RediSearch](https://redis.io/docs/stack/search/) to execute fast queries on Redis Hashes or [JSON](https://redis.io/docs/stack/json/) documents to build a fast matchmaking engine.
 
+## Structure of this exercise
+1. Setup
+1. Basic Redis interaction
+1. Matchmaking basics and how you can use Redis and RediSearch to perform this fast and at high througput
+1. How to do this in code
+
 ### Starting Redis and opening the CLI
 * In a terminal Window, open the Redis CLI and connect to your provided Redis Enterprise database by typing:
 ```
@@ -27,7 +33,7 @@ auth <password>
 and the server should respond with 'OK'.
 
 ### Strings and hashes
-* Let's see if we can store something in Redis and retrieve it again, so let's start simple and start with a basic String key/value pair.
+* The databases that are provided come preloaded with the data required for this exercise, but let's practice some basics first. Let's see if we can store something in Redis and retrieve it again and start with storing/retrieving a basic String key/value pair:
 * Add a String key/value pair to Redis with a key of `hello` and a value of `aws`:
 ```
 set hello aws
@@ -44,7 +50,7 @@ Hashes are typically used to store flat structures with multiple attributes, suc
 
 We will use matching criteria such as `MMR` (Matchmaking Ranking), `experience` (# of matches played) and a few others.
 
-Note that with Redis Enterprise, you can also setup Active-Active across regions (and even clouds if you so desire) so your players always have fast, local access to their sessions/profiles/tickets/etc. while the CRTD synchronisation makes sure that same data is also available in other regions.
+Note that with Redis Enterprise, you can also setup Active-Active across regions (and even clouds if you so desire) so your players always have fast, local access to their sessions/profiles/tickets/etc. while the CRDT synchronisation makes sure that same data is also available in other regions.
 
 * Let's add a Hash with the key `user:lars` and a number of attribute key/value pairs:
 ```
@@ -72,7 +78,7 @@ To find out that this key is a String type.
 If you want to learn more about hashes then check out all the available commands at the [Redis Documentation](https://redis.io/commands#hash). You can use the drop down list on that [same page](https://redis.io/commands) to select a different data structure to find out what commands apply to that particular data structure.
 
 ### Sorted Sets
-Now, let's take a look at a Sorted Set. A Sorted Set (as the name implies) is an ordered collection of unique values. In Redis each value will have a score associated with it, and by updating the score as we go along the Set will maintain its ordering according to the score. Think of scenarios like maintaining a high score leaderboard when playing a game, a list of 'biggest spenders' on your bank account or other scenarios where you need to update a ranking/score as more data becomes available in your application.
+Now, let's take a look at a Sorted Set. A Sorted Set (as the name implies) is an ordered collection of unique values. In Redis each value will have a score associated with it, and by updating the score as we go along the Set will maintain its ordering according to the score. Think of scenarios like maintaining a high score leaderboard when playing a game, a list of 'biggest spenders' on your bank account or other scenarios where you need to update a ranking/score as more data becomes available in your application, but you don't want to sort/parse/maintain this in your app (expensive!) and instead get the most up-to-date ranking instantly.
 
 * We can add members to a Set directly by using the `zadd` command. There is no need to set a key first. So let's add three members to a Sorted Set using the following commands:
 ```
@@ -137,6 +143,17 @@ FT.SEARCH Game-x @pop:Miami @mmr:[2731 2872] -@gamer_id:(2112|4343)
 FT.SEARCH Game-x -@group_tags:{thistle_community|olive_club} ~@play_style_tags:{med_mobile|sprayer}
 ```
 
+### Explanation
+When matchmaking, we want to optimise the quality of the the matched game, which often boils down to a number of things:
+
+1. Match with people of similar skill level
+1. Match with people close to your geographical location
+1. Match with people that match/complement your play style
+1. Do NOT match with people that have been blocked by you
+1. Shortest wait time as possible
+
+To ensure the greatest chance of having a game of sufficient quality, the pool of people to match must be as large as possible. Which means that if your matchmaking algorithm is slow, you will be able to handle less matches/second and are likely facing increased latency (meaning more wait time for everyone). This is why you'd rather not do this on the application side, as it requires a transfer of data and processing power on the consuming side. Do this on the server, right where your data lives; which is why Redis + RediSearch is such a great idea for this scenario. It has no problem at all to handle a pool of several millions of users/tickets and provide quality matches. E.g. think about all the extra work needed and potentially extra wait time if you would need to split that pool up into smaller sections to be able to process it.
+
 ### Query syntax
 
 For a full overview of the RediSearch Query syntax, click [here](https://redis.io/docs/stack/search/reference/query_syntax/).
@@ -168,7 +185,15 @@ And that's not all of the module's functionality; there's plenty more, so if you
 
 ### How to do this all in code
 
-Now that 
+Now that we've covered some of the basic queries needed for matchmaking, let's see how we can integrate that into a (simple) program. The provision environments come with a preloaded dataset of users. We'll use this dataset to generate a set of tickets/match making requests, and then we'll match them using Redis and RediSearch.
+
+For this purpose we will need a number of things on Redis side: an input Stream, which players/clients would use to put their requests/tickets on. A MatchMaker, that listens to the stream and looks for potential matches. And an output Stream, for the matched games, to be given back to the client or downstream for further processing (e.g. looking for an available game server if it's not P2P, etc., etc.) We'll also emit metrics on another output Stream.
+
+:insert diagram here:
+
+
+
+
 
 ## Next steps
 
