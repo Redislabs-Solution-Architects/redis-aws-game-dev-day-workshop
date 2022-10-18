@@ -104,6 +104,8 @@ Now that you have seen a few of the most commonly used Redis data structures in 
 ### RediSearch
 Let's start with RediSearch, a full-text search module for Redis. Retrieving keys by their primary value is fine for many use cases, but what if I have data in the cache that needs to be searched? E.g. a product model, or stores, or transactions by a certain vendor, etc. Typically this is where a key/value model starts to show its limitations. RediSearch to the rescue! RediSearch adds full-text search capabilities to Redis as well as a lot more. See the [RediSearch documentation](https://docs.redis.com/latest/modules/redisearch/) for more detailed information on this module, or checkout the [GitHub repo](https://github.com/RediSearch/RediSearch).
 
+In the context of matchmaking, RediSearch can be used to quickly resolve matches inside Redis, where your data lives. This allows for much faster in-memory matching and will give you the highest possible throughput at the lowest possible latency with almost zero interaction on the client. Let's take a look at some of the query's that make this possible.
+
 * First, we'll create a search index on Hash structures matching a certain prefix:
 ```
 FT.CREATE Game-x ON HASH PREFIX 1 user: SCHEMA username TEXT mmr NUMERIC SORTABLE experience NUMERIC location GEO play_style_tags TAG blacklist_tags TAG group_tags TAG secondary_group_tags TAG pop TEXT SORTABLE
