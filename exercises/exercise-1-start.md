@@ -159,7 +159,7 @@ When matchmaking, we want to optimise the quality of the the matched game, which
 
 To ensure the greatest chance of having a game of sufficient quality, the pool of people to match must be as large as possible. Which means that if your matchmaking algorithm is slow, you will be able to handle less matches/second and are likely facing increased latency (meaning more wait time for everyone). This is why you'd rather not do this on the application side, as it requires a transfer of data and processing power on the consuming side. Do this on the server, right where your data lives; which is why Redis + RediSearch is such a great idea for this scenario. It has no problem to handle a pool of several millions of users/tickets and provide quality matches. E.g. think about all the extra work needed and potentially extra wait time if you would need to split that pool up into smaller sections to be able to process it.
 
-If you want to learn more about all the functionality of the RediSearch module, please check the [RediSearch documentation](https://oss.redis.com/redisearch/).
+While we covered a lot of ground already, there's much, much more you can do with RediSearch. If you want to learn more about all the functionality of the RediSearch module, please check the [RediSearch documentation](https://oss.redis.com/redisearch/).
 
 ### How to do this all in code
 
