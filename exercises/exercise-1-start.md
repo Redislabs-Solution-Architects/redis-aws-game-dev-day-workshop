@@ -136,36 +136,19 @@ FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@user:(jabbott|hughesivan) ~@
 
 By default, the scoring function is [TFIDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf), but there are others available, see the [documentation](https://redis.io/docs/stack/search/reference/scoring/) for more info. You can also add your own scoring function!
 
-* ### Find the closest network edge POP to the player 
+We can also apply aggregate transformations on search result. E.g. what if we want to find the closest city/server to the player? E.g. we can go over all the cities/server in the data set and then apply a `geodistance()` transformation, e.g. sorting it according to distance to the players long/lat. Try running the query below:
+
+* ### Find the closest network edge POP to the player (based on long/lat)
 
 ```
-FT.AGGREGATE cities * LOAD 2 city location 
-  APPLY geodistance(@location, 134.811767,51.6716705) AS dist 
-  SORTBY 2 @dist ASC LIMIT 0 1
+FT.AGGREGATE cities '*' LOAD 2 location city APPLY "geodistance(@location, -80.1401415,25.8102415)" as dist SORTBY 2 @dist ASC LIMIT 0 1
 ```
 
-* ### Find players on closest server
-```
-FT.SEARCH Game-x @pop:Miami LIMIT 0 4 RETURN 3 gamer_id mmr pop
-```
+The output of this query could then be used
 
-* ### Find players on the closest server within +/- 2.5% of MMR
-```
-FT.SEARCH Game-x @pop:Miami @mmr:[2731 2872]
-```
-
-* ### Closest players within +/- 2.5% of MMR who are not blacklisted
-```
-FT.SEARCH Game-x @pop:Miami @mmr:[2731 2872] -@gamer_id:(2112|4343)
-```
-
-* ### Match people in my groups with a similar play style
-```
-FT.SEARCH Game-x -@group_tags:{thistle_community|olive_club} ~@play_style_tags:{med_mobile|sprayer}
-```
 For a full overview of the RediSearch Query syntax, click [here](https://redis.io/docs/stack/search/reference/query_syntax/).
 
-### Explanation
+### Explanation and background
 When matchmaking, we want to optimise the quality of the the matched game, which often boils down to a number of things:
 
 1. Match with people of similar skill level
@@ -174,7 +157,7 @@ When matchmaking, we want to optimise the quality of the the matched game, which
 1. Do NOT match with people that have been blocked by you
 1. Shortest wait time as possible
 
-To ensure the greatest chance of having a game of sufficient quality, the pool of people to match must be as large as possible. Which means that if your matchmaking algorithm is slow, you will be able to handle less matches/second and are likely facing increased latency (meaning more wait time for everyone). This is why you'd rather not do this on the application side, as it requires a transfer of data and processing power on the consuming side. Do this on the server, right where your data lives; which is why Redis + RediSearch is such a great idea for this scenario. It has no problem at all to handle a pool of several millions of users/tickets and provide quality matches. E.g. think about all the extra work needed and potentially extra wait time if you would need to split that pool up into smaller sections to be able to process it.
+To ensure the greatest chance of having a game of sufficient quality, the pool of people to match must be as large as possible. Which means that if your matchmaking algorithm is slow, you will be able to handle less matches/second and are likely facing increased latency (meaning more wait time for everyone). This is why you'd rather not do this on the application side, as it requires a transfer of data and processing power on the consuming side. Do this on the server, right where your data lives; which is why Redis + RediSearch is such a great idea for this scenario. It has no problem to handle a pool of several millions of users/tickets and provide quality matches. E.g. think about all the extra work needed and potentially extra wait time if you would need to split that pool up into smaller sections to be able to process it.
 
 If you want to learn more about all the functionality of the RediSearch module, please check the [RediSearch documentation](https://oss.redis.com/redisearch/).
 
