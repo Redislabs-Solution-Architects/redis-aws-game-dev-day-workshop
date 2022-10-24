@@ -20,7 +20,7 @@ func main() {
 	var ctx = context.Background()
 
 	helpFlag := getopt.BoolLong("help", 'h', "display help")
-	verbose := getopt.BoolLong("verbose", 'v', "verbose output")
+	//verbose := getopt.BoolLong("verbose", 'v', "verbose output")
 
 	redisHost := getopt.StringLong("host", 's', "127.0.0.1", "Redis Host")
 	redisPort := getopt.IntLong("port", 'p', 6379, "Redis Port")
@@ -109,14 +109,14 @@ func main() {
 				// add optional group search params
 				if vals[3] != "" {
 					searchQuery += fmt.Sprintf(" ~@group_tags:{%s}", strings.ReplaceAll(vals[3].(string), ",", "|"))
-					for _, x := range strings.Split(vals[3].(string), ",") {
+					/* for _, x := range strings.Split(vals[3].(string), ",") {
 						redisClient.XAdd(ctx, &redis.XAddArgs{Stream: *metricStream, Values: map[string]interface{}{
 							"stat":             x,
 							"type":             "counter",
 							"leaderboard":      2,
 							"leaderboard_name": "LeaderBoard-Groups",
 						}})
-					}
+					} */
 				}
 				if vals[4] != "" {
 					searchQuery += fmt.Sprintf(" ~@secondary_group_tags:{%s}", strings.ReplaceAll(vals[4].(string), ",", "|"))
@@ -167,9 +167,9 @@ func main() {
 							docs[2].Id,
 						)
 
-						if *verbose {
-							log.Printf("Grouped!! %+v\n", group)
-						}
+						//if *verbose {
+						log.Printf("Grouped!! %+v\n", group)
+						//}
 						// Send match to backfill service
 						redisClient.XAdd(ctx, &redis.XAddArgs{
 							Stream: fmt.Sprintf("%s-%s", *backfillStream, vals[0]),
@@ -181,7 +181,7 @@ func main() {
 					}
 				}
 				redisClient.XDel(ctx, *instream, msg.ID)
-				redisClient.XAdd(ctx, &redis.XAddArgs{Stream: *metricStream, Values: map[string]interface{}{
+				/* redisClient.XAdd(ctx, &redis.XAddArgs{Stream: *metricStream, Values: map[string]interface{}{
 					"stat":        "match",
 					"type":        "counter",
 					"leaderboard": 0,
@@ -191,7 +191,7 @@ func main() {
 					"type":             "counter",
 					"leaderboard":      1,
 					"leaderboard_name": "LeaderBoard-Pop",
-				}})
+				}}) */
 			}
 		}
 	}
