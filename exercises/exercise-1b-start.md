@@ -63,6 +63,9 @@ First, run the program that will maintain the stats stream:
 go run stats.go
 ```
 Second (in a separate tab/window), run the matchmaker:
+```
+go run matchmaker.go
+```
 
 ### Commands
 
