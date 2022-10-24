@@ -23,15 +23,15 @@ For this purpose we will need a number of things on Redis side:
 
 Let's take a look at what's going on in `matchmaker.go`:
 
-- We're working with three streams - one for tickets, one for backfills, and one for metrics.
+- We're working with three streams - one for tickets, one for backfills, and another for metrics.
 - You'll notice a Redis set: 'LeaderBoards'
 - Firstly, two Redis clients are instantiated (a Redis client, and RediSearch client).
 - In order to perform RedisSearch queries, a schema needs to be set up - in this case, for 'ticket', 'pop' and 'mmr'.
-- An input stream ('metrics'), is read using  this means you can read from a stream with a consumer group.
+- An input stream ('metrics'), is read using XREADGROUP - this means you can read from a stream with a consumer group.
 ```
 XReadGroup(ctx context.Context, a *XReadGroupArgs)
 ```
-- Next, for each message in the stream, a lookup is performed. You'll recognise this datatype from exercise 1a - we are retrieving a hash (a user) from Redis.
+- Next, for each message in the stream, a lookup is performed on the Redis database. You'll recognise this datatype from exercise 1a - we are retrieving a hash (a user) from Redis.
 ```
 HMGet(ctx context.Context, key string, fields ...string)
 ```
@@ -40,17 +40,17 @@ HMGet(ctx context.Context, key string, fields ...string)
 ```
 XAdd(ctx context.Context, a *XAddArgs)
 ```
-- At this point, you'll notice the definition of a RediSearch query:
+- Now you'll notice the definition of a RediSearch query:
 ```
 searchQuery := fmt.Sprintf("@pop:%s @mmr:[%d %d] -@user:(%s)", vals[0], int(mmr*0.975), int(mmr*1.025), btags)
 ```
-- Next, some filtering on the message from the ticket stream is performed to see if the user belongs to a group.  If they are the Groups Leaderboard is incremented by adding another message to the metric stream.
+- Next, some filtering on the message from the ticket stream is performed to see if the user belongs to a group.  If they are, the Groups Leaderboard is incremented by adding another message to the metric stream.
 - Some more filtering is performed to amend the query.
-- The RedisSearch query is now performed. If no results are returned, a ticket is created (using `redisClient.HMSet()`). Otherwise, it's updated for the matching user.
+- The RedisSearch query is now performed. If no results are returned, a ticket (in the form of a Redis hash) is created (using `redisClient.HMSet()`). Otherwise, it's updated for the matching user.
 ```
 searchClient.Search(redisearch.NewQuery(searchQuery)
 ```
-- *** TODO: backfill ***
+- The next step is where the actual matmaching occurs. If the RediSearch query returns three users ready to play, a fourth is added to the group, and this data is put on the backfill stream. Tickets that have been persisted as hashes get unlinked (a non-blocking Redis delete command) at this point.
 - Some cleanup is performed by deleting the message from the ticket stream.
 ```
 XDel(ctx context.Context, stream string, ids ...string)
@@ -75,3 +75,7 @@ Second (in a separate tab/window), run the matchmaker:
 [HGET](https://redis.io/commands/hget/)
 
 [HSET](https://redis.io/commands/hset/)
+
+[SADD](https://redis.io/commands/sadd/)
+
+[UNLINK](https://redis.io/commands/unlink/)
