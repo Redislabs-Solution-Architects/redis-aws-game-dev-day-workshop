@@ -54,7 +54,6 @@ Note that with Redis Enterprise, you can also setup Active-Active across regions
 
 The provided database comes with many users pre-loaded, so let's query a few and find out what Hashes are all about.
 
-```
 * Retrieve the Hash and all its attribute key/value pairs from Redis
 ```
 hgetall user:ygreen6478
