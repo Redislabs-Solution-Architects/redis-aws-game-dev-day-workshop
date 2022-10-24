@@ -1,6 +1,6 @@
 <img src="../img/redis-logo-full-color-rgb.png" height=100/><img align="right" src="../img/aws-logo-1.jpeg" height=100 />
 
-# Exercise 1 - Matchmaking
+# Exercise 1a - Matchmaking
 Hello and thank you for joining this hands-on lab! We're happy to have you join, so welcome! This first exercise aims to get you up and running and introduce you to some of the core concepts and datatypes of Redis that we will be using to build a very fast Matchmaking engine. We'll also introduce you to the data type that powers many Leaderboards across the world. If you're stuck, don't dwell too long on it. Instead, check out the hints and the solution [over here](exercise-1-solution.md) or reach out to one of the instructors, who will be quite happy to help! Also, be sure to check out Volkan Civelek's excellent e-book on Matchmaking at <tbd>.
 
 ## Goals
@@ -160,21 +160,6 @@ To ensure the greatest chance of having a game of sufficient quality, the pool o
 
 While we covered a lot of ground already, there's much, much more you can do with RediSearch. If you want to learn more about all the functionality of the RediSearch module, please check the [RediSearch documentation](https://oss.redis.com/redisearch/).
 
-### How to do this all in code
-
-Now that we've covered some of the basic queries needed for matchmaking, let's see how we can integrate that into a (simple) program. The provision environments come with a preloaded dataset of users. We'll use this dataset to generate a set of tickets/match making requests, and then we'll match them using Redis and RediSearch.
-
-For this purpose we will need a number of things on Redis side: an input Stream, which players/clients would use to put their requests/tickets on. A MatchMaker, that listens to the stream and looks for potential matches. And an output Stream, for the matched games, to be given back to the client or downstream for further processing (e.g. looking for an available game server if it's not P2P, etc., etc.) We'll also emit metrics on another output Stream.
-
-:insert diagram here:
-
-###
-First, run the program that will maintain the stats stream:
-```
-go run stats.go
-```
-Second (in a separate tab/window), run the matchmaker:
-
 ## Next steps
 
-Well done, you made it through the first exercise! Take a short break if you want, and then move on to [exercise 2](exercise-2-start.md).
+Well done, you made it through the first section of this exercise! Take a short break if you want, and then move on to [part 1b](exercise-1b-start.md) of the matchmaking exercise .
