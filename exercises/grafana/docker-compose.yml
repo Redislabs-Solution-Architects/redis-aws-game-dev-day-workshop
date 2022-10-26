@@ -33,6 +33,18 @@ services:
         - redis
       ports:
         - "5000:5000"
-
+  stats:
+      build: 
+        context: ../go/
+        dockerfile: ../go/Dockerfile
+      environment:
+        - REDIS_SERVER=redis
+      links:
+      - "redis:redis"
+      depends_on: 
+        - redis
+        - leaderboard
+        - grafana
+      
 volumes:
   grafana-data:

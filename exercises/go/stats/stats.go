@@ -19,9 +19,15 @@ func main() {
 
 	var ctx = context.Background()
 
-	helpFlag := getopt.BoolLong("help", 'h', "display help")
+	redisServer := ""
+	if os.Getenv("REDIS_SERVER") != "" {
+		redisServer = os.Getenv("REDIS_SERVER")
+	} else {
+		redisServer = "127.0.0.1"
+	}
 
-	redisHost := getopt.StringLong("host", 's', "127.0.0.1", "Redis Host")
+	helpFlag := getopt.BoolLong("help", 'h', "display help")
+	redisHost := getopt.StringLong("host", 's', redisServer, "Redis Host")
 	redisPort := getopt.IntLong("port", 'p', 6379, "Redis Port")
 	redisPassword := getopt.StringLong("password", 'a', "", "Redis Password")
 	metricStream := getopt.StringLong("metrics-stream", 'm', "metrics", "where to stream metrics")
