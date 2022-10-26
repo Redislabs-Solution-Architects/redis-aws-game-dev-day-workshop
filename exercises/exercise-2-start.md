@@ -20,12 +20,12 @@ A Sorted Set (as the name implies) is an ordered collection of unique values. In
 * We can add members to a Set directly by using the `zadd` command. There is no need to set a key first.
 
 The syntax of the command is `zadd <key> <score> <member>`. There are more options for this command but we'll start simple. For a full overview of all the options of `zadd` check the [documentation](https://redis.io/commands/zadd/). We will add three members to a Sorted Set using the following commands:
+
 ```
 zadd lb 2 "Lars"
 zadd lb 3 "Paul"
 zadd lb 4 "Patricia"
 zadd lb 1 "Mary"
-
 ```
 * Let's get the top 3 from this Sorted Set using the following command:
 ```
