@@ -16,7 +16,7 @@ tbd
 Some development experience is required to go through the exercises. Working solutions are provided as well, so the workshop should be accessible to developers of all levels.
 
 ## Getting started
-tbd
+We have provided you with a Redis Enterprise Cloud database endpoint and the needed credentials via e-mail. 
 
 ## Exercises
 
