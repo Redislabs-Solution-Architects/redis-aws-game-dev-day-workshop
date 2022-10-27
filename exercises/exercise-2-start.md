@@ -1,6 +1,6 @@
 <img src="../img/redis-logo-full-color-rgb.png" height=100/><img align="right" src="../img/aws-logo-1.jpeg" height=100 />
 
-# Exercise 1b - Matchmaking in code
+# Exercise 2 - Matchmaking in code
 
 ## Redis and Go
 
@@ -18,6 +18,18 @@ For this purpose we will need a number of things on Redis side:
 - We'll also emit metrics on another output Stream.
 
 ![Diagram of matchmaker](/img/diagram.png)
+
+### Getting started with the code
+First, let's fire up the Docker containers:
+```
+cd exercises/grafana
+docker compose up
+```
+Second (in a separate tab/window), run the matchmaker:
+```
+cd ../go
+go run matchmaker.go
+```
 
 ### Exploring the code
 
@@ -56,16 +68,6 @@ searchClient.Search(redisearch.NewQuery(searchQuery)
 XDel(ctx context.Context, stream string, ids ...string)
 ```
 - Finally, the matchmaking and PoP statistics are updated.
-
-### Getting started with the code
-First, run the program that will maintain the stats stream:
-```
-go run stats.go
-```
-Second (in a separate tab/window), run the matchmaker:
-```
-go run matchmaker.go
-```
 
 ### Commands
 
