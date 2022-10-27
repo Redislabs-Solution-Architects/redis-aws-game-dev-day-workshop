@@ -21,8 +21,9 @@ If you want to run things locally instead of in the cloud, you can run all the s
 
 ## Exercises
 
-* Exercise 1 - Matchmaking: [start](exercises/exercise-1-start.md)
-* Exercise 2 - Leaderboards: [start](exercises/exercise-2-start.md)
+* Exercise 1 - Matchmaking, concepts and how RediSearch makes this efficient and fast: [start](exercises/exercise-1-start.md)
+* Exercise 2 - Matchmaking, a real life code example using Go and Redis: [start](exercises/exercise-2-start.md)
+* Exercise 3 - Leaderboards, making them fast and efficient using Redis: [start](exercises/exercise-3-start.md)
 
 ## Troubleshooting
 Reach out to one of the instructors in case of any issues, we're always glad to help. If you're using this repo outside of a workshop or hands-on lab, feel free to submit an issue.
