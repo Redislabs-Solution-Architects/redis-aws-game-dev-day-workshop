@@ -2,6 +2,18 @@
 
 # Exercise 2 - A real life matchmaking application using Go and Redis
 
+## Goals
+* See some example usage of Redis client libraries in application code
+* Explore a matchmaking program
+* Learn about [Redis Streams](https://redis.io/docs/data-types/streams-tutorial/)
+* Visualise Redis data in Grafana Insight
+
+## Structure of this exercise
+* Setup
+* Clone the source code repository
+* Start the matchmaking program
+* Visualise the data in Grafana and RedisInsight
+
 ## Redis and Go
 
 One of the great things about Redis is the number of client libraries available to developers. In this exercise, we'll be using Go, as well as [Redis client for Go](https://github.com/go-redis/redis), [RediSearch client for Go](https://github.com/RediSearch/redisearch-go) and the Redis [TimeSeries client for Go](https://github.com/go-redis/redis).
@@ -39,11 +51,11 @@ Let's take a look at what's going on in `matchmaker.go`:
 - You'll notice a Redis set: 'LeaderBoards'
 - Firstly, two Redis clients are instantiated (a Redis client, and RediSearch client).
 - In order to perform RedisSearch queries, a schema needs to be set up - in this case, for 'ticket', 'pop' and 'mmr'.
-- An input stream ('metrics'), is read using XREADGROUP - this means you can read from a stream with a consumer group.
+- An input stream ('tickets'), is read using XREADGROUP - this means you can read from a stream with a consumer group.
 ```
 XReadGroup(ctx context.Context, a *XReadGroupArgs)
 ```
-- Next, for each message in the stream, a lookup is performed on the Redis database. You'll recognise this datatype from exercise 1a - we are retrieving a hash (a user) from Redis.
+- Next, for each message in the stream, a lookup is performed on the Redis database. You'll recognise this datatype from exercise 1 - we are retrieving a hash (a user) from Redis.
 ```
 HMGet(ctx context.Context, key string, fields ...string)
 ```
