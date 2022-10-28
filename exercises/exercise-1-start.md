@@ -3,12 +3,22 @@
 # Exercise 1 - High quality matchmaking with large volumes of players using RediSearch
 This first exercise aims to get you up and running and introduce you to some of the core concepts and datatypes of Redis that we will be using to build a fast and efficient Matchmaking engine. If you're stuck, don't dwell too long on it. Instead, check out the hints and the solution [over here](exercise-1-solution.md) or reach out to one of the instructors, who will be quite happy to help! Also, be sure to check out Volkan Civelek's excellent (and free!) [e-book on Matchmaking](https://redis.com/docs/the-game-developers-guide-to-matchmaking/).
 
+### Explanation and background
+When matchmaking, we want to optimise the quality of the the matched game, which often boils down to a number of things:
+
+1. Match with people of similar skill level
+1. Match with people close to your geographical location
+1. Match with people that match/complement your play style
+1. Do NOT match with people that have been blocked by you
+1. Shortest wait time as possible
+
+To ensure the greatest chance of having a game of sufficient quality, the pool of people to match must be as large as possible. Which means that if your matchmaking algorithm is slow, you will be able to handle less matches/second and are likely facing increased latency (meaning more wait time for everyone). This is why you'd rather not do this on the application side, as it requires a transfer of data and processing power on the consuming side. Do this on the server, right where your data lives; which is why Redis + RediSearch is such a great idea for this scenario. It has no problem to handle a pool of several millions of users/tickets and provide quality matches. E.g. think about all the extra work needed and potentially extra wait time if you would need to split that pool up into smaller sections to be able to process it.
+
 ## Goals
 
 * Learn some of the basic Redis commands by using the [Redis CLI](https://redis.io/topics/rediscli)
 * Learn about some of the different [data types in Redis](https://redis.io/topics/data-types-intro)
 * Learn about the [Hash](https://redis.io/docs/data-types/hashes/) data type and how we will use it to manage Tickets
-* Learn how to build a Leaderboard using a [Sorted Set](https://redis.io/docs/data-types/sorted-sets/)
 * Learn how to use [RediSearch](https://redis.io/docs/stack/search/) to execute fast queries on Redis Hashes or [JSON](https://redis.io/docs/stack/json/) documents to build a fast matchmaking engine.
 
 ## Structure of this exercise
@@ -143,23 +153,12 @@ We can also apply aggregate transformations on search result. E.g. what if we wa
 FT.AGGREGATE cities '*' LOAD 2 location city APPLY "geodistance(@location, -80.1401415,25.8102415)" as dist SORTBY 2 @dist ASC LIMIT 0 1
 ```
 
-The output of this query could then be used
+The output of this query could then be used as input for a matchmaking query. Can you think of a way to do this more efficiently?
 
 For a full overview of the RediSearch Query syntax, click [here](https://redis.io/docs/stack/search/reference/query_syntax/).
-
-### Explanation and background
-When matchmaking, we want to optimise the quality of the the matched game, which often boils down to a number of things:
-
-1. Match with people of similar skill level
-1. Match with people close to your geographical location
-1. Match with people that match/complement your play style
-1. Do NOT match with people that have been blocked by you
-1. Shortest wait time as possible
-
-To ensure the greatest chance of having a game of sufficient quality, the pool of people to match must be as large as possible. Which means that if your matchmaking algorithm is slow, you will be able to handle less matches/second and are likely facing increased latency (meaning more wait time for everyone). This is why you'd rather not do this on the application side, as it requires a transfer of data and processing power on the consuming side. Do this on the server, right where your data lives; which is why Redis + RediSearch is such a great idea for this scenario. It has no problem to handle a pool of several millions of users/tickets and provide quality matches. E.g. think about all the extra work needed and potentially extra wait time if you would need to split that pool up into smaller sections to be able to process it.
 
 While we covered a lot of ground already, there's much, much more you can do with RediSearch. If you want to learn more about all the functionality of the RediSearch module, please check the [RediSearch documentation](https://oss.redis.com/redisearch/).
 
 ## Next steps
 
-Well done, you made it through the first section of this exercise! Take a short break if you want, and then move on to [part 1b](exercise-1b-start.md) of the matchmaking exercise .
+Well done, you made it through the first section of this exercise! Take a short break if you want, and then move on to [part 2](exercise-2-start.md) of the matchmaking exercise .
