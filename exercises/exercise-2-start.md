@@ -81,6 +81,8 @@ XDel(ctx context.Context, stream string, ids ...string)
 ```
 - Finally, the matchmaking and PoP statistics are updated.
 
+![Diagram of matchmaker](/img/matchmaker-flow-diagram.png)
+
 ### Commands
 
 [XREADGROUP](https://redis.io/commands/xreadgroup/)
