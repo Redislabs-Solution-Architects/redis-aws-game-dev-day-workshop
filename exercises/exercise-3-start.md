@@ -1,7 +1,7 @@
 <img src="../img/redis-logo-full-color-rgb.png" height=100/><img align="right" src="../img/aws-logo-1.jpeg" height=100 />
 
 # Exercise 3 - Fast and efficient Leaderboards using Redis
-Hope you enjoyed and learned something from the exercises around matchmaking. This third exercise will introduce you to the data type that powers many Leaderboards across the world. As with matchmaking, collecting stats/metrics from individual players can be a daunting task, especially with very large numbers of players. How do you keep this up-to-date in real-time and fast? How do you avoid contention on a specific metric? 
+Hope you enjoyed and learned something from the exercises around matchmaking. This third exercise will introduce you to the data type that powers many Leaderboards across the world. As with matchmaking, collecting stats/metrics from individual players can be a daunting task, especially with very large numbers of players. How do you keep this up-to-date in real-time and fast? How do you avoid contention on a specific metric?
 
 The previous exercise used a Redis Stream to collect metrics from a large number of sources; a server-side component (or several of them if needed) can then collect these metrics by subscribing to the Stream and register the information in a central place. In the previous exercises those were mostly counters and gauges, but there's a special data type in Redis called a Sorted Set that we can use to power a leaderboard (or any type of ranked data). Let's get started!
 
@@ -65,3 +65,6 @@ This will return all members with a score between 350-300. Note that because of 
 For more information on Sorted Sets and their assocatied commands, check the [Redis documentation](https://redis.io/commands#sorted_set).
 
 Now that you have seen a few of the most commonly used Redis data structures in action, feel free to take a look at what other data types and command are available in the [Redis documentation](https://redis.io/topics/data-types)
+
+### Visualizing data
+<tbd, explanation of grafana and dashboards>

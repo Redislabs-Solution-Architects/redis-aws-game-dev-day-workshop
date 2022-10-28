@@ -16,7 +16,7 @@
 
 ## Redis and Go
 
-One of the great things about Redis is the number of client libraries available to developers. In this exercise, we'll be using Go, as well as [Redis client for Go](https://github.com/go-redis/redis), [RediSearch client for Go](https://github.com/RediSearch/redisearch-go) and the Redis [TimeSeries client for Go](https://github.com/go-redis/redis).
+One of the great things about Redis is the number of client libraries available to developers. In this exercise, we'll be using Go, as well as [Redis client for Go](https://github.com/go-redis/redis), [RediSearch client for Go](https://github.com/RediSearch/redisearch-go) and the Redis [TimeSeries client for Go](https://github.com/go-redis/redis). If you're not using Go, don't worry, there are over 160 client libraries across over 50 different languages available. A selection is available [on the Redis website](https://redis.io/docs/clients/)
 
 ### How to do this all in code
 
@@ -24,10 +24,10 @@ Now that we've covered some of the basic queries needed for matchmaking, let's s
 
 For this purpose we will need a number of things on Redis side: 
 
-- an input Stream, which players/clients would use to put their requests/tickets on.
+- An input Stream, which players/clients would use to put their requests/tickets on.
 - A MatchMaker, that listens to the stream and looks for potential matches. 
 - And an output Stream, for the matched games, to be given back to the client or downstream for further processing (e.g. looking for an available game server if it's not P2P, etc., etc.) 
-- We'll also emit metrics on another output Stream.
+- We'll also emit metrics on another output Stream so that we can display them in a Grafana dashboard
 
 ![Diagram of matchmaker](/img/diagram.png)
 
@@ -98,3 +98,6 @@ XDel(ctx context.Context, stream string, ids ...string)
 [SADD](https://redis.io/commands/sadd/)
 
 [UNLINK](https://redis.io/commands/unlink/)
+
+### Visualizing data
+<tbd, explanation of grafana and dashboards>
