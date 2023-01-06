@@ -166,7 +166,7 @@
       "type": "table"
     },
     {
-      "datasource": null,
+      "datasource": "Redis",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -252,7 +252,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": "Redis",
       "fieldConfig": {
         "defaults": {
           "color": {
