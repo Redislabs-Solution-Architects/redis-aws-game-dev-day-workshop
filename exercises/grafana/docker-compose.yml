@@ -27,7 +27,9 @@ services:
   leaderboard:
       build: .
       environment:
-        - REDIS_SERVER=redis
+        - REDIS_SERVER=${REDIS_SERVER}
+        - REDIS_PORT=${REDIS_PORT}
+        - REDIS_PASSWORD=${REDIS_PASSWORD}
         - REDIS_LEADERBOARD_SET=LeaderBoards
       depends_on:
         - redis
@@ -37,8 +39,7 @@ services:
       build: 
         context: ../go/
         dockerfile: ../go/Dockerfile
-      environment:
-        - REDIS_SERVER=redis
+      command: go run stats.go --host ${REDIS_SERVER} --port ${REDIS_PORT} --password ${REDIS_PASSWORD:-''}
       links:
       - "redis:redis"
       depends_on: 
