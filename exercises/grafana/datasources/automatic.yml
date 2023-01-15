@@ -9,3 +9,9 @@ datasources:
     type: grafana-simple-json-datasource
     access: proxy
     url: http://leaderboard:5000/
+  # - name: Redis
+  #   type: redis-datasource
+  #   access: proxy
+  #   url: ENDPOINT
+  #   secureJsonData:
+  #     password: PASSWORD
