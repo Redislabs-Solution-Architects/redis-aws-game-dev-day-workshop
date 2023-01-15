@@ -12,6 +12,7 @@ import (
 
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/go-redis/redis/v8"
+	redisGo "github.com/gomodule/redigo/redis"
 	"github.com/pborman/getopt/v2"
 )
 
@@ -37,10 +38,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	searchClient := redisearch.NewClient(
-		fmt.Sprintf("%s:%d", *redisHost, *redisPort),
-		*index,
-	)
+	pool := &redisGo.Pool{Dial: func() (redisGo.Conn, error) {
+		return redisGo.Dial("tcp", fmt.Sprintf("%s:%d", *redisHost, *redisPort), redisGo.DialPassword(*redisPassword))
+	}}
+	searchClient := redisearch.NewClientFromPool(pool, *index)
+
 	// Create Search Index if not available
 
 	schema := redisearch.NewSchema(redisearch.DefaultOptions).
