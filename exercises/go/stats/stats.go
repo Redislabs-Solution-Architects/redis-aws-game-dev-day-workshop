@@ -19,15 +19,8 @@ func main() {
 
 	var ctx = context.Background()
 
-	redisServer := ""
-	if os.Getenv("REDIS_SERVER") != "" {
-		redisServer = os.Getenv("REDIS_SERVER")
-	} else {
-		redisServer = "127.0.0.1"
-	}
-
 	helpFlag := getopt.BoolLong("help", 'h', "display help")
-	redisHost := getopt.StringLong("host", 's', redisServer, "Redis Host")
+	redisHost := getopt.StringLong("host", 's', "127.0.0.1", "Redis Host")
 	redisPort := getopt.IntLong("port", 'p', 6379, "Redis Port")
 	redisPassword := getopt.StringLong("password", 'a', "", "Redis Password")
 	metricStream := getopt.StringLong("metrics-stream", 'm', "metrics", "where to stream metrics")
@@ -38,11 +31,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	var tsPassword *string
+	if *redisPassword != "" {
+		tsPassword = redisPassword
+	}
+
 	// Timeseries Client
 	timeClient := redistimeseries.NewClient(
 		fmt.Sprintf("%s:%d", *redisHost, *redisPort),
 		"nohelp",
-		nil,
+		tsPassword,
 	)
 
 	// Stream client
