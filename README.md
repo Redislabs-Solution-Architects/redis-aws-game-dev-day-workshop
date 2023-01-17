@@ -14,7 +14,7 @@ Hello and thank you for joining this workshop/hands-on lab! We're happy to have 
 Some development experience is required to go through the exercises, but it should be accessible enough for developers of any level as well as other interested folks who might not be developers. Feel free to raise any challenges to us, either directly, or by submitting an issue on this repo.
 
 ## Getting started
-We have provided you with a Redis Enterprise Cloud database endpoint and the needed credentials via e-mail. You can use these to connect to a pre-provisioned instance that has all the features and data that is required for these exercises. We also provided a link to a running Grafana instance that is connected to the REC database instance and is pre-populated with the dashboards used during the exercises.
+We have provided you with a Redis Enterprise Cloud database endpoint and the needed credentials via e-mail. You can use these to connect to a pre-provisioned instance that has all the features and data that is required for these exercises.
 
 ## Running locally
 If you want to run things locally instead of in the cloud, you can run all the serverside components locally by running `docker compose up` from the [exercises/grafana](exercises/grafana) folder. This will run all the images and software used locally.
