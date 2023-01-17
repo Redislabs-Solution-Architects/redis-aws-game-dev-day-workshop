@@ -24,7 +24,7 @@ To ensure the greatest chance of having a game of sufficient quality, the pool o
 ## Structure of this exercise
 1. Setup
 1. Basic Redis interaction
-1. Matchmaking basics and how you can use Redis and RediSearch to perform this fast and at high througput
+1. Matchmaking basics and how you can use Redis and RediSearch to perform this fast and at high throughput
 1. How to do this in code
 
 ### Starting Redis and opening the CLI
@@ -33,10 +33,10 @@ To ensure the greatest chance of having a game of sufficient quality, the pool o
 redis-cli -h <hostname> -p <port>
 ```
 
-By default (when executed without options), the Redis CLI will connect to 127.0.0.1 and port 6379. If you want to use a different hostname and port, you can use the `-h` and `-p` options to specify a diferent hostname and port.
+By default (when executed without options), the Redis CLI will connect to 127.0.0.1 and port 6379. If you want to use a different hostname and port, you can use the `-h` and `-p` options to specify a different hostname and port.
 
 ### Authenticating
-* The provided databases are secured using a password, so before we can do anything we need to provided our authentication. From the Redis CLI:
+* The provided databases are secured using a password, so before we can do anything we need to provide our authentication. From the Redis CLI:
 ```
 auth <password>
 ```
@@ -48,11 +48,11 @@ and the server should respond with 'OK'.
 ```
 set hello aws
 ```
-* Retrieve the key/value pair from Redis
+* Retrieve the key/value pair from Redis:
 ```
 get hello
 ```
-Congratulations, you are now a Redis veteran! Of course, `get` and `set` are not the only two commands available for dealing with Strings in Redis. You can find out about all of the other commands for Strings (and all the other datatypes) by visiting the [Redis documentation](https://redis.io/commands/#string)
+Congratulations, you are now a Redis veteran! Of course, `get` and `set` are not the only two commands available for dealing with Strings in Redis. You can find out about all of the other commands for Strings (and all the other data types) by visiting the [Redis documentation](https://redis.io/commands/#string)
 
 Let's check out some of the other data structures in Redis as well, as we will be using some of these during the exercises. Let's start with a Hash.
 
@@ -64,16 +64,16 @@ Note that with Redis Enterprise, you can also setup Active-Active across regions
 
 The provided database comes with many users pre-loaded, so let's query a few and find out what Hashes are all about.
 
-* Retrieve the Hash and all its attribute key/value pairs from Redis
+* Retrieve the Hash and all its attribute key/value pairs from Redis:
 ```
 hgetall user:ygreen6478
 ```
-* Retrieve a single attribute from the Hash
+* Retrieve a single attribute from the Hash:
 ```
 hget user:ygreen6478 mmr
 ```
 
-Did you notice that Redis has different commands for different data structures? For instance, a `get` command will not work on a hash, but it will work on all other data structures. And an `hget` will work on a hash but not on another data structure. If you try this you will get a 'WRONGTYPE' error. Don't know the type of a certain key? You can ask Redis the type of the `user:lars` key by typing:
+Did you notice that Redis has different commands for different data structures? For instance, a `get` command will not work on a hash, but it will work on all other data structures. And an `hget` will work on a hash but not on another data structure. If you try this you will get a 'WRONGTYPE' error. Don't know the type of a certain key? You can ask Redis by typing:
 ```
 type user:ygreen6478
 ```
@@ -102,9 +102,21 @@ In the context of matchmaking, RediSearch can be used to quickly fill games with
 FT.CREATE GameTix ON HASH PREFIX 1 user: SCHEMA username TEXT mmr NUMERIC SORTABLE experience NUMERIC location GEO play_style_tags TAG blacklist_tags TAG group_tags TAG secondary_group_tags TAG pop TEXT SORTABLE
 ```
 
-This command is a little bit more elaborate than the previous ones, so let's explore it in detail a bit more. We're creating an index called `Game-x` on the `hash` datastructure with the prefix `user:` (remember that we created a Hash earlier that had the key `user:lars`?) and we define the schema to be on the `username` field, which we define as a `TEXT` field. Note that you can also do really cool things such as phonetic search, but that's not needed for this exercise.
+This command is a little bit more elaborate than the previous ones, so let's explore it in detail a bit more. We're creating an index called `GameTix` on the `hash` data structure with the prefix `user:` (remember that we retrieved a Hash earlier that had the key `user:ygreen6478`?) and we define the schema to be on the `username` field, which we define as a `TEXT` field. Note that you can also do really cool things such as phonetic search, but that's not needed for this exercise.
 
-Furthermore we also add the `mmr`, `experience`, `location`, `play_style_tags`, `blacklist_tags`, `group_tags`, `secondary_group_tags` and `pop` fields to the index. Note that you can matchmake on one, more or all items, depending on your use case. But keep in mind that the more attributes you match on, the narrower your search is going to be and it will result in fewer results. So there's always the need to balance quality with quantity, but this may very will depend on the specific player.
+Furthermore we also add the `mmr`, `experience`, `location`, `play_style_tags`, `blacklist_tags`, `group_tags`, `secondary_group_tags` and `pop` fields to the index. Note that you can matchmake on one, more or all items, depending on your use case. But keep in mind that the more attributes you match on, the narrower your search is going to be and it will result in fewer results. So there's always the need to balance quality with quantity, but this may depend on the specific player.
+
+You can list your indexes as follows:
+
+````
+FT._LIST
+````
+
+To get a detailed overview of an index perform the following:
+
+````
+FT.INFO GameTix
+````
 
 Now let's perform some searches that are relevant in a matchmaking context:
 
@@ -117,7 +129,7 @@ FT.SEARCH GameTix "*"
 This will return all items that are indexed. Of course this is not very useful to us, so maybe we should limit our search to items that are in a certain geography, e.g. players on the closest server:
 
 ```
-FT.SEARCH GameTix "@pop:Auckland LIMIT 0 4" 
+FT.SEARCH GameTix "@pop:Auckland" LIMIT 0 4 
 ```
 
 This limits our search already, but perhaps it's also a good idea to limit items to a certain MMR (Matchmaking Rating):
@@ -145,9 +157,7 @@ FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@user:(jabbott|hughesivan) ~@
 
 By default, the scoring function is [TFIDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf), but there are others available, see the [documentation](https://redis.io/docs/stack/search/reference/scoring/) for more info. You can also add your own scoring function!
 
-We can also apply aggregate transformations on search result. E.g. what if we want to find the closest city/server to the player? E.g. we can go over all the cities/server in the data set and then apply a `geodistance()` transformation, e.g. sorting it according to distance to the players long/lat. Try running the query below:
-
-* ### Find the closest network edge POP to the player (based on long/lat)
+We can also apply aggregate transformations on search result. For example, what if we want to find the closest city/server to the player? We can go over all the cities/servers in the data set and then apply a `geodistance()` transformation, e.g. sorting it according to distance to the players long/lat. Try running the query below to find the closest network edge POP to the player (based on long/lat):
 
 ```
 FT.AGGREGATE cities '*' LOAD 2 location city APPLY "geodistance(@location, -80.1401415,25.8102415)" as dist SORTBY 2 @dist ASC LIMIT 0 1
