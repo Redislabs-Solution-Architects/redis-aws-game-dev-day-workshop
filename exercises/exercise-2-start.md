@@ -1,93 +1,75 @@
 <img src="../img/redis-logo-full-color-rgb.png" height=100/><img align="right" src="../img/aws-logo-1.jpeg" height=100 />
 
-# Exercise 2 - A real life matchmaking application using Go and Redis
+# Exercise 2 - Fast and efficient Leaderboards using Redis
+Hope you enjoyed and learned something from the exercises around matchmaking. This exercise will introduce you to the data type that powers many Leaderboards across the world. As with matchmaking, collecting stats/metrics from individual players can be a daunting task, especially with very large numbers of players. How do you keep this up-to-date in real-time and fast? How do you avoid contention on a specific metric?
+
+There's a special data type in Redis called a Sorted Set that we can use to power a leaderboard (or any type of ranked data). Let's get started! 
 
 ## Goals
-* Learn about [Redis Streams](https://redis.io/docs/data-types/streams-tutorial/)
-* See some example usage of a Redis client library in application code
-* Explore a matchmaking program
-* Visualize Redis data in Grafana
+
+* Learn about the [Sorted Set](https://redis.io/docs/data-types/sorted-sets/) data type and its abilities
+* Learn how to build a Leaderboard using a [Sorted Set](https://redis.io/docs/data-types/sorted-sets/)
 
 ## Structure of this exercise
-* Background
-* Setup
-* Load up Grafana
-* Start the matchmaking program
+1. Setup
+1. Leaderboard basics and how to use a Sorted Set to create a Leaderboard
 
-## Redis Streams
+### Setup
+As with Exercise 1, we will be connecting to the provided Redis Enterprise database and will interact with it via the Redis CLI.
+### Sorted Sets
+A Sorted Set (as the name implies) is an ordered collection of unique values. In Redis each value will have a score associated with it, and by updating the score as we go along the Set will maintain its ordering according to the score. Think of scenarios like maintaining a high score leaderboard when playing a game, a list of 'biggest spenders' on your bank account or other scenarios where you need to update a ranking/score as more data becomes available in your application. Especially in gaming, where there's often a very large number of players all generating information that's relevant to the leaderboard you will need a solution that's both able to show the latest updates in real time as wekk as being able to handle large amounts of updates. First we will take a look at how we can use a Sorted Set and further on in the exercise we'll also show how to get large amounts of updates from different sources in there.
 
-In this code, we'll be making use of a Redis data structure called Streams. Redis Streams act like append-only logs - items within a stream are immutable and can't be amended once they've been added to a stream. Redis generates a unique ID for each entry within a stream. Inside a stream, entries are similar to the structure of hashes, with a schemaless set of keys and values. Applications and services can be producers (add to a stream), or consumers (read from a stream). In the code, we'll be seeing examples of both producers and consumers.
+* We can add members to a Set directly by using the `zadd` command. There is no need to set a key first.
 
-For a deep dive into Redis Streams, check out [this tutorial](https://redis.io/docs/data-types/streams-tutorial/)
+The syntax of the command is `zadd <key> <score> <member>`. There are more options for this command but we'll start simple. For a full overview of all the options of `zadd` check the [documentation](https://redis.io/commands/zadd/). We will add three members to a Sorted Set using the following commands:
 
-## Redis and Go
-
-One of the great things about Redis is the number of client libraries available to developers. In this exercise, we'll be using Go, as well as [Redis client for Go](https://github.com/go-redis/redis), [RediSearch client for Go](https://github.com/RediSearch/redisearch-go) and the Redis [TimeSeries client for Go](https://github.com/go-redis/redis). 
-
-If you're developing software but don't use Go, there are over 160 client libraries across over 50 different languages available. A selection is available [on the Redis website](https://redis.io/docs/clients/)
-
-## How to do this in code
-
-In exercise one, we covered some of the basic queries needed for matchmaking. Now let's see how we can integrate that into a (simple) program. The provisioned environments come with a preloaded dataset. We'll use this dataset to simulate incoming ticket requests from gamers, and this will take the form of a Redis Stream.
-Then we'll match these players using Redis and RediSearch.
-
-For this purpose we will need a number of things on Redis side: 
-
-- An input stream, which contains tickets from players (or clients).
-- A matchmaking service that listens to the stream and looks for potential matches.
-- An output stream, for the matched games, to be given back to the client or downstream for further processing (e.g. to launch a game server). 
-- We'll also emit metrics on another output stream so that we can visualize them within a dashboard.
-
-## Diagram
-
-![Diagram of matchmaker](/img/diagram.png)
-
-## Setup
-
-Install Go: 
-
-* https://go.dev/doc/install
-
-Clone the repo:
 ```
-git clone https://github.com/Redislabs-Solution-Architects/redis-aws-game-dev-day-workshop.git
+zadd lb 2 "Lars"
+zadd lb 3 "Paul"
+zadd lb 4 "Patricia"
+zadd lb 1 "Mary"
+```
+* Let's get the top 3 from this Sorted Set using the following command:
+```
+zrange lb 0 2
+```
+* Notice that this the bottom 3 in the Sorted Set by their respective scores, which in this case is Mary, Lars and Paul. This doesn't really make sense from a leaderboard perspective so we can also do the reverse and get the top 3 in the Sorted Set by using:
+```
+zrange lb 0 2 rev
 ```
 
-Now let's fire up the Docker containers:
+Of course real life is more dynamic than this, so scores will change over time. For this purpose we can use the `zincrby <key> <increment> <member>` command. Note that like `zadd` the command can be issues without the Set or any of its members existing in the first place, so in your code you don't need to make that distinction either and you can implement only the `zincrby`. Try the following command:
+
 ```
-cd exercises/grafana
-docker compose up
-```
-
-## Grafana 
-
-Access the Grafana instance that will now be available at http://localhost:3000/. You'll be asked to set a username and password - use the default admin\admin credentials.
-
-Within Grafana, there are two dashboards (Matchmaking and Leaderboards). For this exercise we're going to use the matchmaking dashboard to visualise the Redis data structures which are powering the matchmaking process.
-
-Load up the matchmaking dashboard in your browser.
-
-## Matchmaking code
-
-For the next step, we're interested in `matchmaker.go`. There is also a separate stats process (`stats.go`) - but that is initialized by Docker Compose, so it's running and ready to receive events from the matchmaking service. 
-
-In a terminal, run the matchmaker:
-```
-cd ../go
-go run matchmaker.go
+zincrby lb 321 "Mary"
 ```
 
-You will start to see data being populated within the panels of the Grafana Matchmaking dashboard. Let's take a moment to consider what's going on here:
+And get the top 3 out again using:
+```
+zrange lb 0 2 rev
+```
+Notice how Mary is now at the top of the leaderboard. So from client perspective, all you have to do is submit the score for a player to your local Redis Stream and have the server component(s) read the Stream and populate the Sorted Set with the additional score. There's no need to implement any sorting or parsing logic on your application side, this will 'just work' with the out of the box Sorted Set data type in Redis. To then show the Leaderboard in a dashboard, the only thing that needs to be done is to issue a `zrange` command. To make it even easier, you can also add the `withscores` option and the command will return the top 3 with scores included. Try this out using:
 
-* Incoming ticket requests are stored within a Redis Stream - the application is reading these events using [XREADGROUP](https://redis.io/commands/xreadgroup/).
-* For each ticket request, a user lookup is performed on fields that are stored within a hash using [HMGET](https://redis.io/commands/hmget/).
-* Attributes for a specific user are used to prepare and execute RediSearch queries (as seen in the examples in exercise one).
-* The results from the query determine if a temporary data structure should be created or amended (a Redis Hash) until there's enough matching players for a given set of player skills and location. You'll note the use of [HMSET](https://redis.io/commands/hmset/).
-* Matched players are added to another Redis Stream using [XADD](https://redis.io/commands/xadd/).
-* The incoming tickets stream is cleaned up using [XDEL](https://redis.io/commands/xdel/) and hashes are removed using [UNLINK](https://redis.io/commands/unlink/) - a non blocking delete command.
+```
+zrange lb 0 2 rev withscores
+```
 
-## Visualizing the outputs
+It's also possible to retrieve scores/rankings close to the players own ranking/score, e.g. if our own score is 325, and we want to see which players are close to us in score, we can do so using:
 
-While the matchmaking process is running, take a look at the dashboard panels. Notice how the data is processed and changes over time.
+```
+zrange lb 350 300 rev byscore withscores
+```
 
-The [Redis Datasource Plugin](https://grafana.com/grafana/plugins/redis-datasource/) is a great way to visualise Redis data structures.
+This will return all members with a score between 350-300. Note that because of the `rev` option the lower/upper boundary are also in reverse; if you omit `rev` you need to reverse these.
+
+For more information on Sorted Sets and their assocatied commands, check the [Redis documentation](https://redis.io/commands#sorted_set).
+
+Now that you have seen a few of the most commonly used Redis data structures in action, feel free to take a look at what other data types and command are available in the [Redis documentation](https://redis.io/topics/data-types)
+
+## Next steps
+
+How can we build Redis-powered applications and services that use sorted sets for our leaderboards?
+
+In the final exercise we'll pull together our knowledge of RediSearch and Sorted Sets. We'll see some code that's used for matchmaking and leaderboards, introduce Redis Streams and visualise everything in Grafana.
+
+Click [here](exercise-3-start.md) to move onto exercise 3.

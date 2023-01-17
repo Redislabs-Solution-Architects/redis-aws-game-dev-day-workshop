@@ -171,4 +171,4 @@ While we covered a lot of ground already, there's much, much more you can do wit
 
 ## Next steps
 
-Well done, you made it through the first section of this exercise! Take a short break if you want, and then move on to [part 2](exercise-2-start.md) of the matchmaking exercise .
+Well done, you made it through the first section of this exercise! Take a short break if you want, and then move on to [part 2](exercise-2-start.md) - we'll explore how Redis can be used to build leaderboards.

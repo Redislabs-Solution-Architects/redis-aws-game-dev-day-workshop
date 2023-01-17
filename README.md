@@ -22,8 +22,8 @@ If you want to run things locally instead of in the cloud, you can run all the s
 ## Exercises
 
 * Exercise 1 - High quality matchmaking with large volumes of players using RediSearch: [start](exercises/exercise-1-start.md)
-* Exercise 2 - A real life matchmaking application using Go and Redis: [start](exercises/exercise-2-start.md)
-* Exercise 3 - Fast and efficient Leaderboards using Redis: [start](exercises/exercise-3-start.md)
+* Exercise 2 - Fast and efficient Leaderboards using Redis: [start](exercises/exercise-2-start.md)
+* Exercise 3 - A real life matchmaking and leaderboard application using Go and Redis: [start](exercises/exercise-3-start.md)
 
 ## Troubleshooting
 Reach out to one of the instructors in case of any issues, we're always glad to help. If you're using this repo outside of a workshop or hands-on lab, feel free to submit an issue.
