@@ -143,7 +143,7 @@ Notice how we specify a range in MMR, allowing us to match players close, but no
 FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@username:(rossjames|girwin) ~@play_style_tags:{high_mobile}"
 ```
 
-The `-` prefix before `@user` means we want to exclude any players that match on this criteria. The `~` before `play_style_tags` means we want to include players with this playstyle, but it's optional. Players that do match on playstyle will get scored higher in the results than players that do not match. This allows you to be more flexible in matchmaking and include more and more parameters without actually limiting the results, but rather prioritize them, as below:
+The `-` prefix before `@username` means we want to exclude any players that match on this criteria. The `~` before `play_style_tags` means we want to include players with this playstyle, but it's optional. Players that do match on playstyle will get scored higher in the results than players that do not match. This allows you to be more flexible in matchmaking and include more and more parameters without actually limiting the results, but rather prioritize them, as below:
 
 ```
 FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@username:(rossjames|girwin) ~@play_style_tags:{high_mobile} ~@group_tags:{lightcyan_squad} ~@secondary_group_tags:{olivedrab_posse}" WITHSCORES
