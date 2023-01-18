@@ -17,7 +17,7 @@ There's a special data type in Redis called a Sorted Set that we can use to powe
 ### Setup
 As with Exercise 1, we will be connecting to the provided Redis Enterprise database and will interact with it via the Redis CLI.
 ### Sorted Sets
-A Sorted Set (as the name implies) is an ordered collection of unique values. In Redis each value will have a score associated with it, and by updating the score as we go along the Set will maintain its ordering according to the score. Think of scenarios like maintaining a high score leaderboard when playing a game, a list of 'biggest spenders' on your bank account or other scenarios where you need to update a ranking/score as more data becomes available in your application. Especially in gaming, where there's often a very large number of players all generating information that's relevant to the leaderboard you will need a solution that's both able to show the latest updates in real time as wekk as being able to handle large amounts of updates. First we will take a look at how we can use a Sorted Set and further on in the exercise we'll also show how to get large amounts of updates from different sources in there.
+A Sorted Set (as the name implies) is an ordered collection of unique values. In Redis each value will have a score associated with it, and by updating the score as we go along the Set will maintain its ordering according to the score. Think of scenarios like maintaining a high score leaderboard when playing a game, a list of 'biggest spenders' on your bank account or other scenarios where you need to update a ranking/score as more data becomes available in your application. Especially in gaming, where there's often a very large number of players all generating information that's relevant to the leaderboard you will need a solution that's both able to show the latest updates in real time as well as being able to handle large amounts of updates. First we will take a look at how we can use a Sorted Set and further on in the exercise we'll also show how to get large amounts of updates from different sources in there.
 
 * We can add members to a Set directly by using the `zadd` command. There is no need to set a key first.
 
@@ -33,7 +33,7 @@ zadd lb 1 "Mary"
 ```
 zrange lb 0 2
 ```
-* Notice that this the bottom 3 in the Sorted Set by their respective scores, which in this case is Mary, Lars and Paul. This doesn't really make sense from a leaderboard perspective so we can also do the reverse and get the top 3 in the Sorted Set by using:
+* Notice that the bottom 3 in the Sorted Set by their respective scores, which in this case is Mary, Lars and Paul. This doesn't really make sense from a leaderboard perspective so we can also do the reverse and get the top 3 in the Sorted Set by using:
 ```
 zrange lb 0 2 rev
 ```
@@ -60,7 +60,21 @@ It's also possible to retrieve scores/rankings close to the players own ranking/
 zrange lb 350 300 rev byscore withscores
 ```
 
-This will return all members with a score between 350-300. Note that because of the `rev` option the lower/upper boundary are also in reverse; if you omit `rev` you need to reverse these.
+This will return all members with a score between 350-300. Note that because of the `rev` option the lower/upper boundaries are also in reverse; if you omit `rev` you need to reverse these.
+
+If you want to know the the rank or position of member/player, you can use `zrank`:
+
+```
+zrank lb "Paul"
+```
+
+You can also find out the score for a specific member in your sorted set using `zscore`:
+
+```
+zscore lb "Paul"
+```
+
+To remove a member, use `zrem` and get number of members in the leaderboard using `zcard`.
 
 For more information on Sorted Sets and their assocatied commands, check the [Redis documentation](https://redis.io/commands#sorted_set).
 
