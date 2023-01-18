@@ -140,19 +140,19 @@ FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817]"
 Notice how we specify a range in MMR, allowing us to match players close, but not exactly at the same MMR as our own. Now let's limit it further by excluding players that we blocked and including players with a certain play style:
 
 ```
-FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@user:(jabbott|hughesivan) ~@play_style_tags:{high_mobile}"
+FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@username:(rossjames|girwin) ~@play_style_tags:{high_mobile}"
 ```
 
 The `-` prefix before `@user` means we want to exclude any players that match on this criteria. The `~` before `play_style_tags` means we want to include players with this playstyle, but it's optional. Players that do match on playstyle will get scored higher in the results than players that do not match. This allows you to be more flexible in matchmaking and include more and more parameters without actually limiting the results, but rather prioritize them, as below:
 
 ```
-FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@user:(jabbott|hughesivan) ~@play_style_tags:{high_mobile} ~@group_tags:{lightcyan_squad} ~@secondary_group_tags:{olivedrab_posse}" WITHSCORES
+FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@username:(rossjames|girwin) ~@play_style_tags:{high_mobile} ~@group_tags:{lightcyan_squad} ~@secondary_group_tags:{olivedrab_posse}" WITHSCORES
 ```
 
 Besides being more complex, this query also shows the scores of the individual items. So how are scores calculated? We can executed the same query, but with one additional parameter:
 
 ```
-FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@user:(jabbott|hughesivan) ~@play_style_tags:{high_mobile} ~@group_tags:{lightcyan_squad} ~@secondary_group_tags:{olivedrab_posse}" WITHSCORES EXPLAINSCORE
+FT.SEARCH GameTix "@pop:Auckland @mmr:[2616 2817] -@username:(rossjames|girwin) ~@play_style_tags:{high_mobile} ~@group_tags:{lightcyan_squad} ~@secondary_group_tags:{olivedrab_posse}" WITHSCORES EXPLAINSCORE
 ```
 
 By default, the scoring function is [TFIDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf), but there are others available, see the [documentation](https://redis.io/docs/stack/search/reference/scoring/) for more info. You can also add your own scoring function!
