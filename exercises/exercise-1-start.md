@@ -2,7 +2,7 @@
 
 # Exercise 1 - High quality matchmaking with large volumes of players using RediSearch
 This first exercise aims to get you up and running and introduce you to some of the core concepts and data types of Redis that we will be using to build a fast and efficient Matchmaking engine. If you're stuck, don't dwell on it for too long - reach out to one of the instructors, who will be quite happy to help! Also, be sure to check out Volkan Civelek's excellent (and free!) [e-book on Matchmaking](https://redis.com/docs/the-game-developers-guide-to-matchmaking/).
-
+ 
 ### Explanation and background
 When matchmaking, we want to optimise the quality of the the matched game, which often boils down to a number of things:
 
