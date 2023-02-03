@@ -17,7 +17,7 @@ Some development experience is required to go through the exercises, but it shou
 We have provided you with a Redis Enterprise Cloud database endpoint and the needed credentials via e-mail. You can use these to connect to a pre-provisioned instance that has all the features and data that is required for these exercises.
 
 ## Running locally
-If you want to run things locally instead of in the cloud, you can run all the serverside components locally by running `docker compose up` from the [exercises/grafana](exercises/grafana) folder. This will run all the images and software used locally.
+If you want to run things locally instead of in the cloud, you can run all the serverside components locally by running `docker-compose up` from the [exercises/grafana](exercises/grafana) folder. This will run all the images and software used locally.
 
 ## Exercises
 

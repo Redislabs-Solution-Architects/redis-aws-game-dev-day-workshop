@@ -56,7 +56,7 @@ git clone https://github.com/Redislabs-Solution-Architects/redis-aws-game-dev-da
 Now let's fire up the Docker containers:
 ```
 cd exercises/grafana
-docker compose up
+docker-compose up
 ```
 
 ## Grafana 
