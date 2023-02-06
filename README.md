@@ -5,10 +5,29 @@ Hello and thank you for joining this workshop/hands-on lab! We're happy to have 
 
 ## Prerequisites
 
+### **Cloud 9**
+The workshop can be deployed online on AWS Cloud9 environment. This allows a single "clean" location to play and experiment with Redis and this repo.
+1. In your AWS account, create a new Cloud9 environment.
+2. Choose t2.medium with aws linux image.
+3. Clone this repository.
+4. In the new Cloud9 Environment, locate the security group of the EC2 machine and change the inbound firewall rules to allow TCP 3000 communication.
+
+### **Running locally**
+If you want to run things locally instead of in the cloud, you can run all the serverside components locally by running `docker-compose up &` from the [exercises/grafana](exercises/grafana) folder. This will run all the images and software used locally.
+
 1. A modern development laptop with MacOS or Linux. Linux on Windows via WSL2 will probably work too.
 1. A working internet connection
 1. Docker Desktop, core components or some other way to build and run containers
-1. An active AWS account (we'll be using the free Redis Enterprise Cloud tier or an instance will be provided)
+
+
+
+### Redis-Stack
+With your choice of Cloud9 or Locally, it is adviced to install Redis-Stack which will provide all the redis tools available.
+For our workshop we will use redis-cli to connect to the database and run redis commands.
+
+### Redis Enterprise Database
+Redis Enterprise DB connection details will be provided by the workshop instructors.
+
 
 ## Required knowledge
 Some development experience is required to go through the exercises, but it should be accessible enough for developers of any level as well as other interested folks who might not be developers. Feel free to raise any challenges to us, either directly, or by submitting an issue on this repo.
@@ -16,8 +35,6 @@ Some development experience is required to go through the exercises, but it shou
 ## Getting started
 We have provided you with a Redis Enterprise Cloud database endpoint and the needed credentials via e-mail. You can use these to connect to a pre-provisioned instance that has all the features and data that is required for these exercises.
 
-## Running locally
-If you want to run things locally instead of in the cloud, you can run all the serverside components locally by running `docker-compose up` from the [exercises/grafana](exercises/grafana) folder. This will run all the images and software used locally.
 
 ## Exercises
 
