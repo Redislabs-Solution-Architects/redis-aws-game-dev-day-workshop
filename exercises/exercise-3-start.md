@@ -91,6 +91,8 @@ Access the Grafana instance that will now be available at http://localhost:3000/
 
 Within Grafana, there are two dashboards (Matchmaking and Leaderboards). For this exercise we're going to use the matchmaking dashboard to visualise the Redis data structures which are powering the matchmaking process.
 
+Note: In the left-hand sidebar, you may need to click **Dashboards > Manage** to access the dashboards the first time you log in.
+
 Load up the matchmaking dashboard in your browser.
 
 ## Matchmaking code
