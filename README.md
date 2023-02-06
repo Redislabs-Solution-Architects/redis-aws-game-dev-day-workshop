@@ -5,7 +5,9 @@ Hello and thank you for joining this workshop/hands-on lab! We're happy to have 
 
 ## Prerequisites
 
-### **Cloud 9**
+## Please choose one of the following running environments:
+
+### **Running on AWS Cloud9**
 The workshop can be deployed online on AWS Cloud9 environment. This allows a single "clean" location to play and experiment with Redis and this repo.
 1. In your AWS account, create a new Cloud9 environment.
 2. Choose t2.medium with aws linux image.
@@ -20,7 +22,6 @@ If you want to run things locally instead of in the cloud, you can run all the s
 1. Docker Desktop, core components or some other way to build and run containers
 
 
-
 ### Redis-Stack
 With your choice of Cloud9 or Locally, it is adviced to install Redis-Stack which will provide all the redis tools available.
 For our workshop we will use redis-cli to connect to the database and run redis commands.
@@ -29,6 +30,9 @@ Download instructions: https://redis.io/docs/stack/get-started/install/
 ### Redis Enterprise Database
 Redis Enterprise DB connection details will be provided by the workshop instructors.
 
+### Redis Insights
+Redis develops Redis Insights - a powerful studio to explore the data in Redis Databases.
+Please download and install from here: https://redis.com/redis-enterprise/redis-insight/#insight-form
 
 ## Required knowledge
 Some development experience is required to go through the exercises, but it should be accessible enough for developers of any level as well as other interested folks who might not be developers. Feel free to raise any challenges to us, either directly, or by submitting an issue on this repo.
