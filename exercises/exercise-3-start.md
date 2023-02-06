@@ -44,16 +44,42 @@ For this purpose we will need a number of things on Redis side:
 
 ## Setup
 
-Install Go: 
+**When using a Redis Cloud database, update the following:**
 
-* https://go.dev/doc/install
+Locate the [.env](./grafana/.env) file for docker compose and edit the file, substituting the values to match your Redis Cloud configuration:
 
-Clone the repo:
 ```
-git clone https://github.com/Redislabs-Solution-Architects/redis-aws-game-dev-day-workshop.git
+#REDIS_SERVER=redis
+#REDIS_PORT=6379
+#REDIS_PASSWORD=
+
+REDIS_SERVER=YOUR-REDIS-CLOUD-ENDPOINT
+REDIS_PORT=YOUR-REDIS-CLOUD-PORT
+REDIS_PASSWORD=YOUR-REDIS-CLOUD-PASSWORD
 ```
 
-Now let's fire up the Docker containers:
+Edit Grafana's [datasources](./grafana/datasources/automatic.yml) to use Redis Cloud:
+
+```
+datasources:
+  # - name: Redis
+  #   type: redis-datasource
+  #   access: proxy
+  #   url: redis://redis:6379/
+  - name: SimpleJson
+    type: grafana-simple-json-datasource
+    access: proxy
+    url: http://leaderboard:5000/
+  - name: Redis
+    type: redis-datasource
+    access: proxy
+    url: redis://YOUR-REDIS-CLOUD-ENDPOINT:YOUR-REDIS-CLOUD-PORT/
+    secureJsonData:
+      password: YOUR-REDIS-CLOUD-PASSWORD
+```
+
+
+Start the docker containers:
 ```
 cd exercises/grafana
 docker-compose up
@@ -75,6 +101,13 @@ In a terminal, run the matchmaker:
 ```
 cd ../go
 go run matchmaker.go
+```
+
+**When using a Redis Cloud database, pass command line arguments as follows:**
+
+```
+cd ../go
+go run matchmaker.go --host YOUR-REDIS-CLOUD-ENDPOINT --port YOUR-REDIS-CLOUD-PORT --password YOUR-REDIS-CLOUD-PASSWORD
 ```
 
 You will start to see data being populated within the panels of the Grafana Matchmaking dashboard. Let's take a moment to consider what's going on here:
