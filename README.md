@@ -24,6 +24,7 @@ If you want to run things locally instead of in the cloud, you can run all the s
 ### Redis-Stack
 With your choice of Cloud9 or Locally, it is adviced to install Redis-Stack which will provide all the redis tools available.
 For our workshop we will use redis-cli to connect to the database and run redis commands.
+Download instructions: https://redis.io/docs/stack/get-started/install/
 
 ### Redis Enterprise Database
 Redis Enterprise DB connection details will be provided by the workshop instructors.
