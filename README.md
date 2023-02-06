@@ -21,6 +21,13 @@ If you want to run things locally instead of in the cloud, you can run all the s
 1. A working internet connection
 1. Docker Desktop, core components or some other way to build and run containers
 
+### Docker-compose
+We will run the docker images with docker-compose tool.
+You can run the following on your cloud9 environment for quick setup: 
+
+`sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose`
+
+`sudo chmod +x /usr/local/bin/docker-compose`
 
 ### Redis-Stack
 With your choice of Cloud9 or Locally, it is adviced to install Redis-Stack which will provide all the redis tools available.
